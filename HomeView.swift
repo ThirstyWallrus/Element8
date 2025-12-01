@@ -4,6 +4,7 @@
 //
 //  Created by Dynasty Stat Drop on 11/30/25.
 //  Updated by Copilot on 2025-12-01 to use global Sepia background and sand/script themed menu colors.
+//  Modified on 2025-12-01 to add "Play Game" navigation link to GameSetupView.
 //
 
 import SwiftUI
@@ -47,6 +48,19 @@ struct HomeView: View {
                         .padding(.horizontal, 24)
                     
                     Spacer()
+                    
+                    // New: Play Game navigation link (integrates the new game views)
+                    NavigationLink(destination: GameSetupView()) {
+                        Text("Play Game")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(sandDark)
+                            .cornerRadius(10)
+                            .shadow(color: .black.opacity(0.12), radius: 4, x: 0, y: 2)
+                    }
+                    .padding(.horizontal, 40)
                     
                     // Navigation buttons with sand/script themed styling
                     NavigationLink(destination: AboutView()) {

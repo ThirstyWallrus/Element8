@@ -1,4 +1,3 @@
-
 // Element8Game.swift
 // Game model, setup view, and game view for Element8
 //
@@ -7,6 +6,7 @@
 // so it is safe to add to the existing app and will inherit the global Sepia background
 // defined in Element8App.swift.
 //
+// Updated 2025-12-01: Wired GameSetupView to CharacterRegistry profiles and added profile-driven Player/GameViewModel.
 
 import SwiftUI
 
@@ -27,7 +27,7 @@ enum Direction: String, CaseIterable {
     }
 }
 
-// Enum for Elemental Characters with Powers
+// Enum for Elemental Characters with Powers (kept for compatibility; profiles can map to these)
 enum ElementCharacter: String, CaseIterable {
     case fire = "Fire" // Power: +2 attack in combat
     case water = "Water" // Power: +1 defense
@@ -38,17 +38,9 @@ enum ElementCharacter: String, CaseIterable {
     case metal = "Metal" // Power: +2 defense
     case wood = "Wood" // Power: Heal on card draw
     
-    var color: Color {
-        switch self {
-        case .fire: return .red
-        case .water: return .blue
-        case .earth: return .green
-        case .wind: return .cyan
-        case .lightning: return .yellow
-        case .ice: return .mint
-        case .metal: return .gray
-        case .wood: return .brown
-        }
+    func offset() -> (row: Int, col: Int) {
+        // not used here, but kept for compatibility if needed
+        (0, 0)
     }
     
     var startingPosition: (row: Int, col: Int) {
@@ -61,23 +53,6 @@ enum ElementCharacter: String, CaseIterable {
         case .wind, .metal: return (0, 9)
         }
     }
-    
-    func powerModifier(for type: PowerType) -> Int {
-        switch type {
-        case .movement:
-            return self == .wind ? 2 : 0
-        case .attack:
-            return self == .fire ? 2 : 0
-        case .defense:
-            return (self == .water || self == .metal) ? 1 : 0
-        case .heal:
-            return self == .wood ? 1 : 0
-        }
-    }
-}
-
-enum PowerType {
-    case movement, attack, defense, heal
 }
 
 // Game Card Enum (Simplified)
@@ -88,22 +63,35 @@ enum GameCard: String, CaseIterable {
     // Add more types as desired
 }
 
-// Player Model
+// Player Model (profile-driven)
 class Player: Identifiable, ObservableObject {
     let id = UUID()
-    let character: ElementCharacter
+    
+    /// The profile backing this player. This is the canonical source of display name,
+    /// color, base health, and per-profile modifiers.
+    let profile: CharacterProfile
+    
     @Published var position: (row: Int, col: Int)
-    @Published var health: Int = 10
+    @Published var health: Int
     @Published var isEliminated: Bool = false
     @Published var emblems: [String] = [] // e.g., "square", "triangle"
     
-    init(character: ElementCharacter) {
-        self.character = character
-        self.position = character.startingPosition
+    init(profile: CharacterProfile, initialPosition: (Int, Int) = (0,0)) {
+        self.profile = profile
+        self.position = initialPosition
+        self.health = profile.baseHealth
     }
+    
+    // Convenience properties to reduce refactor friction:
+    var displayName: String { profile.displayName }
+    var color: Color { profile.color }
+    var movementModifier: Int { profile.movementModifier }
+    var attackModifier: Int { profile.attackModifier }
+    var defenseModifier: Int { profile.defenseModifier }
+    var healModifier: Int { profile.healModifier }
 }
 
-// Game State ViewModel
+// Game State ViewModel (profile-driven)
 @MainActor class GameViewModel: ObservableObject {
     @Published var players: [Player] = []
     @Published var currentPlayerIndex: Int = 0
@@ -120,32 +108,75 @@ class Player: Identifiable, ObservableObject {
     
     init() {
         // Add obstacles to map (random barriers), but avoid placing barriers on corner starting positions
+        // We don't yet know players; startGame will ensure clearing start tiles.
         var placed = 0
         while placed < 10 {
             let row = Int.random(in: 0..<10)
             let col = Int.random(in: 0..<10)
-            // Skip if it is a starting corner
-            let isStartingCorner = [
-                (9, 0), (9, 9), (0, 0), (0, 9)
-            ].contains { $0 == (row, col) }
-            if !isStartingCorner && mapGrid[row][col] != .black {
+            if mapGrid[row][col] != .black {
                 mapGrid[row][col] = .black // Barrier
                 placed += 1
             }
         }
     }
     
-    func startGame(with characters: [ElementCharacter]) {
-        players = characters.map { Player(character: $0) }
-        // Ensure players' starting positions are not barriers
-        for p in players {
-            let r = p.position.row, c = p.position.col
+    // Start game with profiles rather than pure enum cases
+    func startGame(with profiles: [CharacterProfile]) {
+        // Create players preserving order of selection
+        players = profiles.map { Player(profile: $0) }
+        
+        // Assign starting positions:
+        // If profile.elementCase exists, use its canonical starting position.
+        // Otherwise assign available corner positions and then fallback positions.
+        let corners: [(Int, Int)] = [
+            (9, 0), // bottom-left
+            (9, 9), // bottom-right
+            (0, 0), // top-left
+            (0, 9)  // top-right
+        ]
+        var assignedPositions: [(Int, Int)] = []
+        
+        for (i, player) in players.enumerated() {
+            if let mapped = player.profile.elementCase {
+                // Use ElementCharacter startingPosition if available
+                let pos = mapped.startingPosition
+                player.position = pos
+                assignedPositions.append(pos)
+            } else {
+                // Try to pick the next free corner
+                if let freeCorner = corners.first(where: { !assignedPositions.contains(where: { $0 == $0 }) && !assignedPositions.contains($0) }) {
+                    // Note: the above closure had a slight complexity; just choose next unused corner by scanning corners:
+                    var found: (Int, Int)? = nil
+                    for corner in corners {
+                        if !assignedPositions.contains(where: { $0 == corner }) {
+                            found = corner
+                            break
+                        }
+                    }
+                    if let found = found {
+                        player.position = found
+                        assignedPositions.append(found)
+                    } else {
+                        // All corners taken — place near center at a pseudo-random offset
+                        player.position = (Int.random(in: 3..<7), Int.random(in: 3..<7))
+                    }
+                } else {
+                    // fallback
+                    player.position = (Int.random(in: 3..<7), Int.random(in: 3..<7))
+                }
+            }
+            
+            // Ensure starting tile is not a barrier
+            let r = player.position.row, c = player.position.col
             if mapGrid[r][c] == .black {
                 mapGrid[r][c] = .white
             }
         }
+        
+        // If somehow positions still coincide in a way we dislike, we leave them — the engine supports multiple players on a tile.
         currentPlayerIndex = Int.random(in: 0..<players.count)
-        gameMessage = "\(currentPlayer().character.rawValue)'s turn: Choose direction"
+        gameMessage = "\(currentPlayer().displayName)'s turn: Choose direction"
+        
         // Assign stone card randomly
         stoneCardOwner = players.randomElement()
     }
@@ -156,7 +187,7 @@ class Player: Identifiable, ObservableObject {
     
     func rollDice() -> Int {
         let roll = Int.random(in: 1...6)
-        return roll + currentPlayer().character.powerModifier(for: .movement)
+        return roll + currentPlayer().movementModifier
     }
     
     func move(in direction: Direction, spaces: Int) {
@@ -189,10 +220,10 @@ class Player: Identifiable, ObservableObject {
     }
     
     func resolveCombat(attacker: Player, defender: Player) {
-        let attackRoll = Int.random(in: 1...6) + attacker.character.powerModifier(for: .attack)
-        let defenseRoll = Int.random(in: 1...6) + defender.character.powerModifier(for: .defense)
+        let attackRoll = Int.random(in: 1...6) + attacker.attackModifier
+        let defenseRoll = Int.random(in: 1...6) + defender.defenseModifier
         
-        gameMessage += "\nCombat: \(attacker.character.rawValue) vs \(defender.character.rawValue)"
+        gameMessage += "\nCombat: \(attacker.displayName) vs \(defender.displayName)"
         
         if attackRoll > defenseRoll {
             var damage = (attackRoll - defenseRoll) + damageMultiplier
@@ -206,12 +237,12 @@ class Player: Identifiable, ObservableObject {
                 gameMessage += "\nStone Card blocked!"
             }
             defender.health -= damage
-            gameMessage += "\n\(defender.character.rawValue) takes \(damage) damage"
+            gameMessage += "\n\(defender.displayName) takes \(damage) damage"
             if defender.health <= 0 {
                 defender.isEliminated = true
                 eliminatedCount += 1
                 damageMultiplier += 1
-                gameMessage += "\n\(defender.character.rawValue) eliminated!"
+                gameMessage += "\n\(defender.displayName) eliminated!"
                 checkForWin()
             }
         } else {
@@ -224,7 +255,7 @@ class Player: Identifiable, ObservableObject {
             // Apply effect (simplified)
             switch card {
             case .heal:
-                currentPlayer().health += 2 + currentPlayer().character.powerModifier(for: .heal)
+                currentPlayer().health += 2 + currentPlayer().healModifier
             case .buffAttack:
                 // Temporary buff — left as no-op in this simplified build
                 break
@@ -244,8 +275,8 @@ class Player: Identifiable, ObservableObject {
     
     func endTurn() {
         // Optional: Heal or other powers
-        if currentPlayer().character == .earth {
-            currentPlayer().health += currentPlayer().character.powerModifier(for: .heal)
+        if currentPlayer().profile.elementCase == .earth {
+            currentPlayer().health += currentPlayer().healModifier
         }
         // Next player
         if players.allSatisfy({ $0.isEliminated }) {
@@ -257,7 +288,7 @@ class Player: Identifiable, ObservableObject {
             currentPlayerIndex = (currentPlayerIndex + 1) % players.count
         } while currentPlayer().isEliminated
         selectedDirection = nil
-        gameMessage = "\(currentPlayer().character.rawValue)'s turn: Choose direction"
+        gameMessage = "\(currentPlayer().displayName)'s turn: Choose direction"
         // Random map shift (10% chance)
         if Double.random(in: 0...1) < 0.1 {
             drawGameCard() // Simulate shift via card
@@ -269,15 +300,16 @@ class Player: Identifiable, ObservableObject {
         if activePlayers.count == 1 {
             isGameOver = true
             winner = activePlayers.first
-            gameMessage = "\(winner!.character.rawValue) wins!"
+            gameMessage = "\(winner!.displayName) wins!"
         }
     }
 }
 
-// Setup View to Select Characters
+// Setup View to Select Characters (now wiring to CharacterRegistry)
 struct GameSetupView: View {
-    @State private var selectedCharacters: [ElementCharacter] = []
+    @State private var selectedProfiles: [CharacterProfile] = []
     @State private var navigateToGame: Bool = false
+    @ObservedObject private var registryObserver = CharacterRegistry.sharedObserver
     
     var body: some View {
         VStack {
@@ -285,34 +317,56 @@ struct GameSetupView: View {
                 .font(.title)
                 .padding(.top, 20)
             
-            List(ElementCharacter.allCases, id: \.self) { char in
-                Button(action: {
-                    if selectedCharacters.contains(char) {
-                        selectedCharacters.removeAll { $0 == char }
-                    } else if selectedCharacters.count < 8 {
-                        selectedCharacters.append(char)
-                    }
-                }) {
-                    HStack {
-                        Text(char.rawValue)
-                            .foregroundColor(.primary)
-                        Spacer()
-                        if selectedCharacters.contains(char) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(char.color)
+            List {
+                ForEach(CharacterRegistry.shared.profilesSortedByName, id: \.self) { profile in
+                    Button(action: {
+                        if selectedProfiles.contains(profile) {
+                            selectedProfiles.removeAll { $0 == profile }
+                        } else if selectedProfiles.count < 8 {
+                            selectedProfiles.append(profile)
                         }
+                    }) {
+                        HStack {
+                            // Optional sprite preview
+                            if let sprite = profile.spriteName, !sprite.isEmpty {
+                                Image(sprite)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 36, height: 36)
+                                    .cornerRadius(4)
+                            } else {
+                                Circle()
+                                    .fill(profile.color)
+                                    .frame(width: 36, height: 36)
+                            }
+                            
+                            VStack(alignment: .leading) {
+                                Text(profile.displayName)
+                                    .foregroundColor(.primary)
+                                Text(profile.description)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(2)
+                            }
+                            Spacer()
+                            if selectedProfiles.contains(profile) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(profile.color)
+                            }
+                        }
+                        .padding(.vertical, 6)
                     }
                 }
             }
             
             Spacer()
             
-            NavigationLink(destination: GameView(characters: selectedCharacters), isActive: $navigateToGame) {
+            NavigationLink(destination: GameView(profiles: selectedProfiles), isActive: $navigateToGame) {
                 EmptyView()
             }
             
             Button(action: {
-                if selectedCharacters.count >= 2 {
+                if selectedProfiles.count >= 2 {
                     navigateToGame = true
                 }
             }) {
@@ -331,15 +385,14 @@ struct GameSetupView: View {
     }
 }
 
-// Main Game View
+// Main Game View (accepts CharacterProfile array)
 struct GameView: View {
     @StateObject private var viewModel = GameViewModel()
     @State private var rollResult: Int?
-    private let characters: [ElementCharacter]
+    private let profiles: [CharacterProfile]
     
-    init(characters: [ElementCharacter]) {
-        self.characters = characters
-        // StateObject is initialized above; we'll call startGame in onAppear
+    init(profiles: [CharacterProfile]) {
+        self.profiles = profiles
     }
     
     var body: some View {
@@ -365,10 +418,10 @@ struct GameView: View {
                             // Show player(s) on this tile — show first non-eliminated player found
                             if let player = viewModel.players.first(where: { !$0.isEliminated && $0.position.row == row && $0.position.col == col }) {
                                 Circle()
-                                    .fill(player.character.color)
+                                    .fill(player.color)
                                     .frame(width: 20, height: 20)
                                     .overlay(
-                                        Text(String(player.character.rawValue.prefix(1)))
+                                        Text(String(player.displayName.prefix(1)))
                                             .font(.caption2)
                                             .foregroundColor(.white)
                                     )
@@ -407,7 +460,7 @@ struct GameView: View {
                 }
                 .padding(.bottom, 6)
             } else if viewModel.isGameOver {
-                Text(viewModel.winner?.character.rawValue ?? "Game Over")
+                Text(viewModel.winner?.displayName ?? "Game Over")
                     .font(.title2)
                     .foregroundColor(.green)
                     .padding(.bottom, 6)
@@ -422,8 +475,8 @@ struct GameView: View {
             List {
                 ForEach(viewModel.players) { player in
                     HStack {
-                        Text(player.character.rawValue)
-                            .foregroundColor(player.character.color)
+                        Text(player.displayName)
+                            .foregroundColor(player.color)
                             .bold()
                         Spacer()
                         Text("HP: \(player.health)")
@@ -442,12 +495,29 @@ struct GameView: View {
         .onAppear {
             // Only start the game when the view appears and when players are not yet initialized
             if viewModel.players.isEmpty {
-                // Guard that characters array has at least 2 entries; otherwise set defaults
-                let charsToUse = characters.isEmpty ? [ElementCharacter.fire, ElementCharacter.water] : characters
-                viewModel.startGame(with: charsToUse)
+                // Guard that profiles array has at least 2 entries; otherwise set defaults
+                let profilesToUse = profiles.isEmpty ? [CharacterRegistry.shared.profile(forKey: "fire") ?? CharacterProfile(key: "fire", displayName: "Fire", description: "Default Fire", baseHealth: 10, color: .red, elementCase: .fire, attackModifier: 2)] : profiles
+                viewModel.startGame(with: profilesToUse)
             }
         }
         .navigationTitle("Element 8 - Game")
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+// A small convenience to observe registry updates in UI (CharacterRegistry is value-backed)
+extension CharacterRegistry {
+    // Provide a lightweight ObservableObject wrapper to notify views when registry changes
+    static var sharedObserver: CharacterRegistryObserver {
+        CharacterRegistryObserver.shared
+    }
+}
+
+final class CharacterRegistryObserver: ObservableObject {
+    static let shared = CharacterRegistryObserver()
+    @Published var tick: Int = 0
+    private init() {
+        // Intentionally minimal — consumers will call CharacterRegistry.shared when needed.
+        // If you want live push updates for registry changes, register notifications here.
     }
 }

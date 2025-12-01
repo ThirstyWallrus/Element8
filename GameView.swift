@@ -9,6 +9,7 @@
 //  - Added on-screen live dice rolling overlay (DieView).
 //  - Ensures the entire board is visible while rolling by computing tile height to fit the available board area.
 //  - Disables input while rolling and animates the die with randomized faces and rotation.
+//  - 2025-12-01 update: Forward/Backward movement on perimeter path (Monopoly-style).
 //
 
 import SwiftUI
@@ -51,8 +52,10 @@ struct GameView: View {
                     let padding: CGFloat = 24
                     let availWidth = max(geo.size.width - padding, 10)
                     let availHeight = max(geo.size.height - padding, 10)
-                    // Tile size that fits the full 10x10 board inside available area.
-                    let tileSizeToFit = min(availWidth / 10.0, availHeight / 10.0)
+                    // Number of cells per row/col is based on the viewModel's mapGrid
+                    let gridCount = CGFloat(viewModel.mapGrid.count)
+                    // Tile size that fits the full perimeter grid inside available area.
+                    let tileSizeToFit = min(availWidth / gridCount, availHeight / gridCount)
                     // Normal tile size: keep tiles reasonably large but never exceed the fit size.
                     let normalTileSize = min(44, tileSizeToFit)
                     // When rolling, force the tile size to the fit size so the entire board is visible.
@@ -86,7 +89,7 @@ struct GameView: View {
             .frame(minHeight: 320, maxHeight: 520)
             .padding(.horizontal, 8)
             
-            // Controls — direction buttons
+            // Controls — forward/backward buttons (perimeter movement)
             if !viewModel.isGameOver {
                 HStack(spacing: 10) {
                     ForEach(Direction.allCases, id: \.self) { dir in
@@ -202,6 +205,7 @@ struct GameView: View {
             // Update visual reported roll and selected direction
             rollResult = totalSpaces
             viewModel.selectedDirection = direction
+            // Move along perimeter
             viewModel.move(in: direction, spaces: totalSpaces)
             viewModel.checkForCombat()
             // Optional draw card (existing random chance logic kept from previous implementation)

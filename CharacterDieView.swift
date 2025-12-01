@@ -1,4 +1,3 @@
-
 //
 //  CharacterDieView.swift
 //  Element8
@@ -148,15 +147,20 @@ public struct CharacterDieView: View {
     private func idealForegroundColor(for background: Color) -> Color {
         #if canImport(UIKit)
         // Try to get components via UIColor for a heuristic. Default to white if unknown.
-        if let ui = UIColor(background) {
-            var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-            ui.getRed(&r, green: &g, blue: &b, alpha: &a)
+        // UIColor(Color) returns a non-optional UIColor, so treat it as such and then attempt to extract components.
+        let ui = UIColor(background)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        if ui.getRed(&r, green: &g, blue: &b, alpha: &a) {
             // perceived brightness (standard formula)
             let brightness = (r * 299 + g * 587 + b * 114) / 1000
             return brightness > 0.6 ? Color.black : Color.white
+        } else {
+            // Could not extract RGB (e.g., system color), fall back to white for safety.
+            return Color.white
         }
-        #endif
+        #else
         return Color.white
+        #endif
     }
 }
 

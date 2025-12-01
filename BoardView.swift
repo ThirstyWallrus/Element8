@@ -214,17 +214,18 @@ struct BoardView: View {
     /// Returns a subtle overlay when the tile is the current player's tile.
     @ViewBuilder
     private func highlightOverlayIfCurrentPlayer(row: Int, col: Int) -> some View {
-        guard highlightCurrentPlayerTile, !viewModel.players.isEmpty else {
+        // Avoid early-return semantics; explicitly emit views for all branches
+        if !highlightCurrentPlayerTile || viewModel.players.isEmpty {
             EmptyView()
-            return
-        }
-        let current = viewModel.currentPlayer()
-        if current.position.row == row && current.position.col == col {
-            RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.accentColor.opacity(0.9), lineWidth: 2)
-                .shadow(color: Color.accentColor.opacity(0.18), radius: 6, x: 0, y: 2)
         } else {
-            EmptyView()
+            let current = viewModel.currentPlayer()
+            if current.position.row == row && current.position.col == col {
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(Color.accentColor.opacity(0.9), lineWidth: 2)
+                    .shadow(color: Color.accentColor.opacity(0.18), radius: 6, x: 0, y: 2)
+            } else {
+                EmptyView()
+            }
         }
     }
     

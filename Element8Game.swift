@@ -28,7 +28,8 @@ enum Direction: String, CaseIterable {
 }
 
 // Enum for Elemental Characters with Powers (kept for compatibility; profiles can map to these)
-enum ElementCharacter: String, CaseIterable {
+// MADE PUBLIC to match the public CharacterProfile that references it.
+public enum ElementCharacter: String, CaseIterable {
     case fire = "Fire" // Power: +2 attack in combat
     case water = "Water" // Power: +1 defense
     case earth = "Earth" // Power: +1 health regen per turn
@@ -144,7 +145,7 @@ class Player: Identifiable, ObservableObject {
                 assignedPositions.append(pos)
             } else {
                 // Try to pick the next free corner
-                if let freeCorner = corners.first(where: { !assignedPositions.contains(where: { $0 == $0 }) && !assignedPositions.contains($0) }) {
+                if let freeCorner = corners.first(where: { !assignedPositions.contains(where: { $0 == $0 }) && !assignedPositions.contains(where: $0) }) {
                     // Note: the above closure had a slight complexity; just choose next unused corner by scanning corners:
                     var found: (Int, Int)? = nil
                     for corner in corners {

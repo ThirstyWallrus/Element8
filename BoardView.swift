@@ -1,4 +1,4 @@
-
+//
 //  Element8BoardView.swift
 //  Element8
 //
@@ -67,7 +67,7 @@ struct BoardView: View {
         if playersHere.isEmpty {
             return "Tile \(row), column \(col). \(tileDescription). No players."
         } else {
-            let names = playersHere.map { $0.character.rawValue }
+            let names = playersHere.map { $0.displayName }
             return "Tile \(row), column \(col). \(tileDescription). Players: \(names.joined(separator: ", "))."
         }
     }
@@ -101,20 +101,17 @@ struct BoardView: View {
                 if playersHere.count <= maxPlayerDots {
                     // Show small stacked/arranged dots for each player
                     HStack(spacing: 4) {
-                        ForEach(Array(playersHere.enumerated()), id: \.element.id) { (index, player) in
+                        ForEach(0..<playersHere.count, id: \.self) { i in
+                            let player = playersHere[i]
                             ZStack {
                                 Circle()
-                                    .fill(player.character.color)
+                                    .fill(player.color)
                                     .frame(width: 16, height: 16)
                                     .shadow(color: .black.opacity(0.15), radius: 1, x: 0, y: 1)
-                                Text(String(player.character.rawValue.prefix(1)))
+                                Text(String(player.displayName.prefix(1)))
                                     .font(.caption2)
                                     .foregroundColor(.white)
                             }
-                            .overlay(
-                                // Small elimination indicator if present (shouldn't show as we filtered eliminated)
-                                EmptyView()
-                            )
                         }
                     }
                 } else {
@@ -162,12 +159,18 @@ struct Element8BoardView_Previews: PreviewProvider {
         vm.mapGrid[1][1] = .black
         vm.mapGrid[6][7] = .black
         
+        // Build some sample CharacterProfile instances for preview
+        let pFire = CharacterProfile(key: "fire", displayName: "Fire", description: "Fierce attacker", baseHealth: 12, color: .red, elementCase: .fire, attackModifier: 2)
+        let pWater = CharacterProfile(key: "water", displayName: "Water", description: "Defensive", baseHealth: 11, color: .blue, elementCase: .water, defenseModifier: 1)
+        let pEarth = CharacterProfile(key: "stone", displayName: "Stone", description: "Tank", baseHealth: 13, color: Color(red: 0.45, green: 0.36, blue: 0.24), elementCase: .earth, defenseModifier: 1)
+        let pWind = CharacterProfile(key: "wind", displayName: "Wind", description: "Fast", baseHealth: 10, color: .cyan, elementCase: .wind, movementModifier: 2)
+        
         // Add a couple of demo players (using the Player class)
         vm.players = [
-            Player(character: .fire),
-            Player(character: .water),
-            Player(character: .earth),
-            Player(character: .wind)
+            Player(profile: pFire),
+            Player(profile: pWater),
+            Player(profile: pEarth),
+            Player(profile: pWind)
         ]
         // Place them manually for preview clarity
         vm.players[0].position = (row: 3, col: 3)

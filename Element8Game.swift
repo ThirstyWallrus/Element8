@@ -1,3 +1,4 @@
+//
 // Element8Game.swift
 // Game model, setup view, and game view for Element8
 //
@@ -7,6 +8,8 @@
 // defined in Element8App.swift.
 //
 // Updated 2025-12-01: Wired GameSetupView to CharacterRegistry profiles and added profile-driven Player/GameViewModel.
+// Fixed 2025-12-01: corrected corner assignment logic in startGame(with:) to avoid invalid closure usage.
+//
 
 import SwiftUI
 
@@ -137,32 +140,22 @@ class Player: Identifiable, ObservableObject {
         ]
         var assignedPositions: [(Int, Int)] = []
         
-        for (i, player) in players.enumerated() {
+        for player in players {
             if let mapped = player.profile.elementCase {
                 // Use ElementCharacter startingPosition if available
                 let pos = mapped.startingPosition
                 player.position = pos
                 assignedPositions.append(pos)
             } else {
-                // Try to pick the next free corner
-                if let freeCorner = corners.first(where: { !assignedPositions.contains(where: { $0 == $0 }) && !assignedPositions.contains(where: $0) }) {
-                    // Note: the above closure had a slight complexity; just choose next unused corner by scanning corners:
-                    var found: (Int, Int)? = nil
-                    for corner in corners {
-                        if !assignedPositions.contains(where: { $0 == corner }) {
-                            found = corner
-                            break
-                        }
-                    }
-                    if let found = found {
-                        player.position = found
-                        assignedPositions.append(found)
-                    } else {
-                        // All corners taken — place near center at a pseudo-random offset
-                        player.position = (Int.random(in: 3..<7), Int.random(in: 3..<7))
-                    }
+                // Find the next unused corner in a type-safe way.
+                if let freeCorner = corners.first(where: { corner in
+                    // check assignedPositions does NOT already contain this corner
+                    !assignedPositions.contains(where: { $0 == corner })
+                }) {
+                    player.position = freeCorner
+                    assignedPositions.append(freeCorner)
                 } else {
-                    // fallback
+                    // All corners taken — place near center at a pseudo-random offset
                     player.position = (Int.random(in: 3..<7), Int.random(in: 3..<7))
                 }
             }

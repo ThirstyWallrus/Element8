@@ -45,6 +45,7 @@ public struct CharacterProfile: Identifiable, Hashable {
     /// A short human readable description of the special ability or power.
     public var specialAbility: String?
     
+    /// Primary initializer (preferred) — includes explicit startingCornerIndex.
     public init(key: String,
                 displayName: String,
                 description: String,
@@ -72,6 +73,39 @@ public struct CharacterProfile: Identifiable, Hashable {
         self.defenseModifier = defenseModifier
         self.healModifier = healModifier
         self.specialAbility = specialAbility
+    }
+    
+    /// Compatibility initializer
+    /// Some code in the project (or compiled objects) expects an initializer signature
+    /// without the `startingCornerIndex` parameter. This convenience initializer
+    /// provides that symbol and forwards to the primary initializer using `nil`
+    /// for startingCornerIndex so behavior is unchanged.
+    public init(key: String,
+                displayName: String,
+                description: String,
+                baseHealth: Int = 10,
+                color: Color = .white,
+                spriteName: String? = nil,
+                elementCase: ElementCharacter? = nil,
+                movementModifier: Int = 0,
+                attackModifier: Int = 0,
+                defenseModifier: Int = 0,
+                healModifier: Int = 0,
+                specialAbility: String? = nil) {
+        // Forward to the designated initializer and provide nil for startingCornerIndex.
+        self.init(key: key,
+                  displayName: displayName,
+                  description: description,
+                  baseHealth: baseHealth,
+                  color: color,
+                  spriteName: spriteName,
+                  elementCase: elementCase,
+                  startingCornerIndex: nil,
+                  movementModifier: movementModifier,
+                  attackModifier: attackModifier,
+                  defenseModifier: defenseModifier,
+                  healModifier: healModifier,
+                  specialAbility: specialAbility)
     }
 }
 

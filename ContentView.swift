@@ -149,7 +149,9 @@ private struct IntroView: View {
 
     // Timing configuration (adjust duration to taste)
     private let initialDelay: TimeInterval = 0.8
-    private let crawlDurationPerPoint: Double = 0.006 // seconds per point of movement (tunable)
+    // NOTE: Changed to slow the crawl to 50% of the original speed (i.e., half-speed).
+    // Original value: 0.006 seconds per point. Doubling it to 0.012 yields a 50% slower crawl.
+    private let crawlDurationPerPoint: Double = 0.012 // seconds per point of movement (tunable)
     private let extraPadding: CGFloat = 60 // extra travel so text fully leaves view
 
     var body: some View {

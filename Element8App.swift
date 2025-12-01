@@ -11,7 +11,17 @@ import SwiftUI
 struct Element8App: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            // Global background: Sepia applied here so every view in the window group
+            // inherits the background and we avoid duplicating full-screen images
+            ZStack {
+                Image("Sepia")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                
+                // Main app entry view (navigation is handled inside)
+                ContentView()
+            }
         }
     }
 }

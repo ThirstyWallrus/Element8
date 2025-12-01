@@ -3,7 +3,7 @@
 //  Element8
 //
 //  Created by Dynasty Stat Drop on 3/14/25.
-//  Updated by Copilot on 2025-12-01 to use CompassBG, Element8, and 8 assets and add entry navigation.
+//  Updated by Copilot on 2025-12-01 to use global Sepia background, increase title size, and refine layout.
 //
 
 import SwiftUI
@@ -12,20 +12,15 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Primary app background (preferred for main app shell)
-                Image("CompassBG")
-                    .resizable()
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                
+                // No per-view full-screen background here — the app's global Sepia background is applied in Element8App.
                 VStack {
                     Spacer()
                     
-                    // Central logo / title image
+                    // Central logo / title image (increased size for stronger branding)
                     Image("Element8")
                         .resizable()
                         .scaledToFit()
-                        .frame(maxWidth: 480, maxHeight: 200)
+                        .frame(maxWidth: 640, maxHeight: 260) // increased size
                         .shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 4)
                         .padding(.horizontal, 24)
                     
@@ -34,7 +29,7 @@ struct ContentView: View {
                     // Enter button to proceed into HomeView for continuity
                     NavigationLink(destination: HomeView()) {
                         Text("Enter")
-                            .font(.headline)
+                            .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.white)
                             .padding(.vertical, 14)
                             .padding(.horizontal, 36)
@@ -65,5 +60,6 @@ struct ContentView: View {
 }
 
 #Preview {
+    // For preview, show ContentView alone — previews won't include Element8App's global background.
     ContentView()
 }

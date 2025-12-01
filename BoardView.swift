@@ -10,9 +10,16 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// A reusable board view that renders a 2D tile map from GameViewModel.mapGrid,
 /// shows players on tiles, optionally handles tile taps, and supports light customization.
+///
+/// Additions:
+/// - Perimeter awareness: can show perimeter index badges and mark corner tiles,
+///   using the GameViewModel.perimeterPath and pathIndexFor(row:col:).
 struct BoardView: View {
     @ObservedObject var viewModel: GameViewModel
     
@@ -28,6 +35,12 @@ struct BoardView: View {
     /// Maximum number of small player dots to show inside a tile.
     /// If there are more players than this, a numeric badge is shown instead.
     var maxPlayerDots: Int = 3
+    
+    /// When true, display small perimeter indices/corner indicators on perimeter tiles.
+    var showPerimeterIndices: Bool = true
+    
+    /// When true, visually highlight the tile belonging to the current player.
+    var highlightCurrentPlayerTile: Bool = true
     
     var body: some View {
         // Guard for irregular grids; we assume rectangular grid
@@ -75,7 +88,11 @@ struct BoardView: View {
     /// A single tile cell view
     @ViewBuilder
     private func TileView(row: Int, col: Int) -> some View {
-        ZStack {
+        // Determine if this coordinate is perimeter and if so the index
+        let perimeterIndex = viewModel.pathIndexFor(row: row, col: col)
+        let isPerimeter = perimeterIndex != nil
+        
+        ZStack(alignment: .topLeading) {
             // Base tile color comes directly from the viewModel's mapGrid. This allows
             // the game logic to encode tile types as colors (e.g., .black = barrier).
             Rectangle()
@@ -92,6 +109,13 @@ struct BoardView: View {
                 BarrierOverlay()
                     .clipShape(Rectangle())
                     .opacity(0.28)
+            }
+            
+            // Perimeter index / corner badge (top-left)
+            if showPerimeterIndices && isPerimeter, let idx = perimeterIndex {
+                PerimeterBadge(index: idx, isCorner: isCornerIndex(idx))
+                    .padding(4)
+                    .transition(.opacity)
             }
             
             // Players on this tile
@@ -127,6 +151,10 @@ struct BoardView: View {
         }
         .cornerRadius(4)
         .padding(0)
+        // Highlight the tile if it belongs to the current player (optional)
+        .overlay(
+            highlightOverlayIfCurrentPlayer(row: row, col: col)
+        )
     }
     
     /// Lightweight diagonal stripes used as barrier decoration
@@ -146,22 +174,74 @@ struct BoardView: View {
         }
     }
     
+    /// Perimeter badge view (small rounded badge showing index or corner mark)
+    @ViewBuilder
+    private func PerimeterBadge(index: Int, isCorner: Bool) -> some View {
+        if isCorner {
+            // Corner indicator (diamond)
+            ZStack {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.white.opacity(0.9))
+                    .frame(width: 20, height: 20)
+                    .rotationEffect(.degrees(45))
+                    .shadow(color: .black.opacity(0.06), radius: 1, x: 0, y: 1)
+                Image(systemName: "star.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 10, height: 10)
+                    .foregroundColor(Color.yellow)
+                    .rotationEffect(.degrees(-45))
+            }
+            .frame(width: 20, height: 20)
+        } else {
+            Text("\(index)")
+                .font(.caption2)
+                .fontWeight(.semibold)
+                .padding(4)
+                .background(Color.white.opacity(0.94))
+                .clipShape(RoundedRectangle(cornerRadius: 6))
+                .shadow(color: .black.opacity(0.06), radius: 1, x: 0, y: 1)
+        }
+    }
+    
+    /// Determine whether the provided perimeter index is a corner index.
+    /// Corner indices for an N x N board occur at multiples of (boardSize - 1):
+    private func isCornerIndex(_ idx: Int) -> Bool {
+        let stride = max(1, viewModel.boardSize - 1)
+        return idx % stride == 0
+    }
+    
+    /// Returns a subtle overlay when the tile is the current player's tile.
+    @ViewBuilder
+    private func highlightOverlayIfCurrentPlayer(row: Int, col: Int) -> some View {
+        guard highlightCurrentPlayerTile, !viewModel.players.isEmpty else {
+            EmptyView()
+            return
+        }
+        let current = viewModel.currentPlayer()
+        if current.position.row == row && current.position.col == col {
+            RoundedRectangle(cornerRadius: 4)
+                .stroke(Color.accentColor.opacity(0.9), lineWidth: 2)
+                .shadow(color: Color.accentColor.opacity(0.18), radius: 6, x: 0, y: 2)
+        } else {
+            EmptyView()
+        }
+    }
+    
     /// Attempt a robust detection for barrier-colored tiles (black).
     /// This converts to UIColor where possible and checks RGB components for black.
     /// Falls back to a textual check if necessary (less reliable).
     private func isBarrierColor(_ color: Color) -> Bool {
         #if canImport(UIKit)
-        // Attempt to extract components via UIColor
-        if let uiColor = UIColor(color) as UIColor? {
-            var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
-            if uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
-                // Consider "black" when RGB are near zero (allowing for minor floating error)
-                let epsilon: CGFloat = 0.01
-                return r < epsilon && g < epsilon && b < epsilon
-            }
+        // Convert to UIColor and inspect components.
+        let uiColor = UIColor(color)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        if uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
+            let epsilon: CGFloat = 0.02
+            return r < epsilon && g < epsilon && b < epsilon
         }
         #endif
-        // Fallback: compare description — not ideal, but reduces a crash / compile-time reliance on Color equatable.
+        // Fallback: compare description
         let desc = String(describing: color).lowercased()
         return desc.contains("black")
     }

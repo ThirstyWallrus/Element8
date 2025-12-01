@@ -169,6 +169,21 @@ class Player: Identifiable, ObservableObject {
     
     var pathLength: Int { perimeterPath.count }
     
+    // MARK: - New helpers (non-invasive)
+    /// Return the perimeter path index for a given grid coordinate, or nil if that coordinate is not on the perimeter.
+    func pathIndexFor(row: Int, col: Int) -> Int? {
+        for (i, coord) in perimeterPath.enumerated() {
+            if coord.row == row && coord.col == col { return i }
+        }
+        return nil
+    }
+    
+    /// Return whether the given coordinate is a perimeter tile
+    func isPerimeterTile(row: Int, col: Int) -> Bool {
+        return pathIndexFor(row: row, col: col) != nil
+    }
+    // End helpers
+    
     // Start game with profiles rather than pure enum cases
     func startGame(with profiles: [CharacterProfile]) {
         // Create players preserving order of selection

@@ -3,58 +3,44 @@
 //  Element8
 //
 //  Created by Dynasty Stat Drop on 11/30/25.
+//  Updated by Copilot on 2025-12-01 to use Sepia, Element8, and 8 assets.
 //
-
 
 import SwiftUI
 
 struct HomeView: View {
     // Custom colors inspired by the Element 8 game theme: parchment browns, vibrant element accents
-    let parchmentColor = Color(red: 0.82, green: 0.65, blue: 0.47) // Approximate parchment background
+    let parchmentColor = Color(red: 0.82, green: 0.65, blue: 0.47) // kept as a fallback accent
     let accentColor = Color.orange // For buttons and highlights
     let textColor = Color.black // For readability on light backgrounds
     
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background gradient to mimic parchment or treasure map style
-                LinearGradient(
-                    gradient: Gradient(colors: [parchmentColor, .brown.opacity(0.8)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
+                // Use the Sepia asset as the preferred menu/background texture
+                Image("Sepia")
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
                 
-                // Subtle parchment texture overlay using AsyncImage for web-loaded texture
-                AsyncImage(url: URL(string: "https://media.istockphoto.com/id/1350825463/photo/seamless-tileable-vintage-parchment-paper-texture-background.jpg?s=612x612&w=0&k=20&c=CZUx51FKs__Ly6fhVJUnG5-1T1SvuTQfn5RYQNp6ylw=")) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .opacity(0.3) // Adjust opacity for subtlety
-                    } else if phase.error != nil {
-                        Color.clear // Fallback if loading fails
-                    } else {
-                        Color.clear // Placeholder while loading
-                    }
-                }
-                .ignoresSafeArea()
+                // Optional subtle overlay for contrast (keeps readability)
+                Color.black.opacity(0.06)
+                    .ignoresSafeArea()
                 
                 VStack(spacing: 20) {
-                    // Logo or title with fantasy style
-                    Text("Element 8")
-                        .font(.custom("Papyrus", size: 48)) // Use a script-like font if available; fallback to system
-                        .fontWeight(.bold)
-                        .foregroundColor(textColor)
-                        .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 2)
-                        .padding(.top, 50)
-                    
-                    // Hero image placeholder (replace with actual game image URL or asset)
-                    Image(systemName: "star.circle.fill") // Placeholder for compass or element symbol
+                    // Brand image for consistent look
+                    Image("Element8")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: 150)
-                        .foregroundColor(accentColor)
+                        .frame(height: 72)
+                        .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 2)
+                        .padding(.top, 36)
+                    
+                    // Decorative hero symbol (use bundled '8' image)
+                    Image("8")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 140)
                         .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3)
                     
                     // Brief description matching website vibe
@@ -62,7 +48,7 @@ struct HomeView: View {
                         .font(.title3)
                         .foregroundColor(textColor)
                         .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, 24)
                     
                     Spacer()
                     
@@ -113,19 +99,43 @@ struct HomeView: View {
 // Placeholder views for navigation (expand as needed)
 struct AboutView: View {
     var body: some View {
-        Text("About Page")
+        ZStack {
+            Image("Sepia")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            Text("About Page")
+                .font(.title)
+                .padding()
+        }
     }
 }
 
 struct ShopView: View {
     var body: some View {
-        Text("Shop Page")
+        ZStack {
+            Image("Sepia")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            Text("Shop Page")
+                .font(.title)
+                .padding()
+        }
     }
 }
 
 struct RulesView: View {
     var body: some View {
-        Text("Rules Page")
+        ZStack {
+            Image("Sepia")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+            Text("Rules Page")
+                .font(.title)
+                .padding()
+        }
     }
 }
 

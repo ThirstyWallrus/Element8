@@ -39,7 +39,7 @@ public enum ElementCharacter: String, CaseIterable {
     
     func offset() -> (row: Int, col: Int) {
         // not used here, but kept for compatibility if needed
-        (0, 0)
+        return (0, 0)
     }
     
     var startingPosition: (row: Int, col: Int) {

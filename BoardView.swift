@@ -56,7 +56,7 @@ struct BoardView: View {
         let color = viewModel.mapGrid[row][col]
         // Describe barriers as "Barrier" for screen reader clarity.
         let tileDescription: String
-        if color == .black {
+        if isBarrierColor(color) {
             tileDescription = "Barrier"
         } else {
             // Attempt to derive a simple description from color components where possible.
@@ -87,7 +87,7 @@ struct BoardView: View {
                 )
             
             // If this tile is a barrier, add a visual mark (diagonal stripes).
-            if viewModel.mapGrid[row][col] == .black {
+            if isBarrierColor(viewModel.mapGrid[row][col]) {
                 // A lightweight barrier indicator
                 BarrierOverlay()
                     .clipShape(Rectangle())
@@ -144,6 +144,26 @@ struct BoardView: View {
             }
             .stroke(Color.black.opacity(0.18), lineWidth: 1)
         }
+    }
+    
+    /// Attempt a robust detection for barrier-colored tiles (black).
+    /// This converts to UIColor where possible and checks RGB components for black.
+    /// Falls back to a textual check if necessary (less reliable).
+    private func isBarrierColor(_ color: Color) -> Bool {
+        #if canImport(UIKit)
+        // Attempt to extract components via UIColor
+        if let uiColor = UIColor(color) as UIColor? {
+            var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+            if uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) {
+                // Consider "black" when RGB are near zero (allowing for minor floating error)
+                let epsilon: CGFloat = 0.01
+                return r < epsilon && g < epsilon && b < epsilon
+            }
+        }
+        #endif
+        // Fallback: compare description — not ideal, but reduces a crash / compile-time reliance on Color equatable.
+        let desc = String(describing: color).lowercased()
+        return desc.contains("black")
     }
 }
 

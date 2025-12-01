@@ -262,14 +262,14 @@ struct Element8BoardView_Previews: PreviewProvider {
         // Build some sample CharacterProfile instances for preview
         let pFire = CharacterProfile(key: "fire", displayName: "Fire", description: "Fierce attacker", baseHealth: 12, color: .red, elementCase: .fire, attackModifier: 2)
         let pWater = CharacterProfile(key: "water", displayName: "Water", description: "Defensive", baseHealth: 11, color: .blue, elementCase: .water, defenseModifier: 1)
-        let pEarth = CharacterProfile(key: "stone", displayName: "Stone", description: "Tank", baseHealth: 13, color: Color(red: 0.45, green: 0.36, blue: 0.24), elementCase: .earth, defenseModifier: 1)
+        let pStone = CharacterProfile(key: "stone", displayName: "Stone", description: "Tank", baseHealth: 13, color: Color(red: 0.45, green: 0.36, blue: 0.24), elementCase: .stone, defenseModifier: 1)
         let pWind = CharacterProfile(key: "wind", displayName: "Wind", description: "Fast", baseHealth: 10, color: .cyan, elementCase: .wind, movementModifier: 2)
         
         // Add a couple of demo players (using the Player class)
         vm.players = [
             Player(profile: pFire),
             Player(profile: pWater),
-            Player(profile: pEarth),
+            Player(profile: pStone),
             Player(profile: pWind)
         ]
         // Place them manually for preview clarity

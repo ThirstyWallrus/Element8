@@ -17,6 +17,7 @@ private let lightProfile = CharacterProfile(
     color: Color(red: 1.0, green: 0.95, blue: 0.7),
     spriteName: "char_light",
     elementCase: nil, // not currently in ElementCharacter enum
+    startingCornerIndex: 3, // bottom-left
     movementModifier: 0,
     attackModifier: 0,
     defenseModifier: 0,

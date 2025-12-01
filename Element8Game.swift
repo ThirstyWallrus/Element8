@@ -15,29 +15,32 @@ enum Direction: String, CaseIterable {
     case backward = "Backward"
 }
 
-// Enum for Elemental Characters with Powers (kept for compatibility; profiles can map to these)
+// Enum for Elemental Characters with Powers
+// Updated to match the character files exactly: fire, water, stone, plant, wind, electricity, magnetism, light
 public enum ElementCharacter: String, CaseIterable {
     case fire = "Fire" // Power: +2 attack in combat
     case water = "Water" // Power: +1 defense
-    case earth = "Earth" // Power: +1 health regen per turn
+    case stone = "Stone" // Power: +1 health regen / tank behavior
+    case plant = "Plant" // Power: Heal on card draw / regen
     case wind = "Wind" // Power: +2 movement
-    case lightning = "Lightning" // Power: Stun chance (skip enemy turn)
-    case ice = "Ice" // Power: Freeze (reduce enemy movement)
-    case metal = "Metal" // Power: +2 defense
-    case wood = "Wood" // Power: Heal on card draw
+    case electricity = "Electricity" // Power: Stun / disrupt
+    case magnetism = "Magnetism" // Power: +2 defense / control metal
+    case light = "Light" // Power: Support / reveal map features
     
     // Map each ElementCharacter to a preferred starting corner index on the perimeter path.
     // Corner indices are: 0 = top-left, 1 = top-right, 2 = bottom-right, 3 = bottom-left (clockwise).
     var startingCornerIndex: Int {
         switch self {
-        case .fire, .lightning:
+        case .fire, .electricity:
             return 3 // bottom-left
-        case .water, .ice:
+        case .water:
             return 2 // bottom-right
-        case .earth, .wood:
+        case .stone, .plant:
             return 0 // top-left
-        case .wind, .metal:
+        case .wind, .magnetism:
             return 1 // top-right
+        case .light:
+            return 0 // default to top-left for Light (adjustable in profiles)
         }
     }
 }
@@ -359,7 +362,8 @@ class Player: Identifiable, ObservableObject {
     
     func endTurn() {
         // Optional: Heal or other powers
-        if currentPlayer().profile.elementCase == .earth {
+        // Previously checked for `.earth`. Updated to check `.stone` to match StoneCharacter
+        if currentPlayer().profile.elementCase == .stone {
             currentPlayer().health += currentPlayer().healModifier
         }
         // Next player

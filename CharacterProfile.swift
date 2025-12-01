@@ -28,6 +28,12 @@ public struct CharacterProfile: Identifiable, Hashable {
     /// Optional mapping to the ElementCharacter enum (if applicable).
     /// If nil, this profile is purely presentational and not directly mapped.
     public var elementCase: ElementCharacter?
+    /// Explicit preferred starting corner index for perimeter boards (0..3).
+    /// 0 = top-left, 1 = top-right, 2 = bottom-right, 3 = bottom-left.
+    /// When set, this is used as the primary source of truth for starting corner
+    /// assignment; if nil the GameViewModel will fall back to elementCase or the
+    /// previous automatic assignment.
+    public var startingCornerIndex: Int?
     /// Movement modifier (added to dice roll movement).
     public var movementModifier: Int
     /// Attack modifier (added to attack rolls).
@@ -46,6 +52,7 @@ public struct CharacterProfile: Identifiable, Hashable {
                 color: Color = .white,
                 spriteName: String? = nil,
                 elementCase: ElementCharacter? = nil,
+                startingCornerIndex: Int? = nil,
                 movementModifier: Int = 0,
                 attackModifier: Int = 0,
                 defenseModifier: Int = 0,
@@ -59,6 +66,7 @@ public struct CharacterProfile: Identifiable, Hashable {
         self.color = color
         self.spriteName = spriteName
         self.elementCase = elementCase
+        self.startingCornerIndex = startingCornerIndex
         self.movementModifier = movementModifier
         self.attackModifier = attackModifier
         self.defenseModifier = defenseModifier

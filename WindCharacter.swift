@@ -16,6 +16,7 @@ private let windProfile = CharacterProfile(
     color: .cyan,
     spriteName: "char_wind",
     elementCase: .wind,
+    startingCornerIndex: 3, // bottom-left
     movementModifier: 2,
     attackModifier: 0,
     defenseModifier: 0,

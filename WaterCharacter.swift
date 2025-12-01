@@ -16,6 +16,7 @@ private let waterProfile = CharacterProfile(
     color: .blue,
     spriteName: "char_water",
     elementCase: .water,
+    startingCornerIndex: 3, // bottom-left
     movementModifier: 0,
     attackModifier: 0,
     defenseModifier: 1,

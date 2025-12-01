@@ -16,6 +16,7 @@ private let fireProfile = CharacterProfile(
     color: .red,
     spriteName: "char_fire", // optional: place an asset with this name in Assets.xcassets
     elementCase: .fire,
+    startingCornerIndex: 3, // bottom-left
     movementModifier: 0,
     attackModifier: 2,
     defenseModifier: 0,

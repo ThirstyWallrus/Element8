@@ -15,7 +15,8 @@ private let plantProfile = CharacterProfile(
     baseHealth: 11,
     color: .green,
     spriteName: "char_plant",
-    elementCase: .wood, // maps to existing ElementCharacter.wood
+    elementCase: .plant, // maps to existing ElementCharacter.wood
+    startingCornerIndex: 3, // bottom-left
     movementModifier: 0,
     attackModifier: 0,
     defenseModifier: 0,

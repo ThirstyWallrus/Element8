@@ -16,7 +16,7 @@ private let electricityProfile = CharacterProfile(
     baseHealth: 10,
     color: .yellow,
     spriteName: "char_electricity",
-    elementCase: .lightning, // maps to existing ElementCharacter.lightning
+    elementCase: .electricity, // maps to existing ElementCharacter.lightning
     movementModifier: 0,
     attackModifier: 1,
     defenseModifier: 0,

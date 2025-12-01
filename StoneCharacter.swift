@@ -15,7 +15,8 @@ private let stoneProfile = CharacterProfile(
     baseHealth: 13,
     color: Color(red: 0.45, green: 0.36, blue: 0.24), // earthy brown
     spriteName: "char_stone",
-    elementCase: .earth, // maps to existing ElementCharacter.earth
+    elementCase: .stone, // maps to existing ElementCharacter.earth
+    startingCornerIndex: 3, // bottom-left
     movementModifier: 0,
     attackModifier: 0,
     defenseModifier: 1,

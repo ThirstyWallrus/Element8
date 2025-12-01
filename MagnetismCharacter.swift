@@ -15,7 +15,8 @@ private let magnetismProfile = CharacterProfile(
     baseHealth: 12,
     color: .gray,
     spriteName: "char_magnetism",
-    elementCase: .metal, // maps to existing ElementCharacter.metal
+    elementCase: .magnetism, // maps to existing ElementCharacter.metal
+    startingCornerIndex: 3, // bottom-left
     movementModifier: 0,
     attackModifier: 0,
     defenseModifier: 2,

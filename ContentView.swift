@@ -22,35 +22,44 @@ struct ContentView: View {
     // NOTE: Do not remove the `storyText` variable — just replace its contents.
     private let storyText: String =
     """
+    
+    
     ELEMENT 8
+    
+    
+    
     
     Strife and war this world tore
     Conflict betweencities four
     Each one to patron two
     The forces of nature true
+    
     Jungle lands of the East
     Revere the Sun Plants and Beast
     Western skies fill with Thunder
     From Magnetic power turned asunder
+    
     While Firey volcanoes rise forth
     From the depths of the Northern Earth
     In the South the seas do entrance
     With the Wind in a raging dance
+    
     But a greater power than all
     Will soon bring their downfall
     A flare from a dying star
     Tears the world from afar
+    
     In the attack the void is sprung
     And thus the requiem is rung
     The chaotic void dispels force
-    That animates natures course...
+    That animates natures course
     
     Now the elements strive
     That the world will survive
     Defeating the others is the Key
     Willing the sacrifice cannot be
     To preserve the worlds life
-    There is purpose to their strife...
+    There is purpose to their strife
     
     But who will be the one
     To slay the rest and leave none

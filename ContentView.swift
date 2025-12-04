@@ -24,7 +24,55 @@ struct ContentView: View {
     """
     
     
-    ELEMENT 8
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -104,7 +152,7 @@ private struct LandingView: View {
                 Spacer()
 
                 // Central logo / title image (increased size for stronger branding)
-                Image("Element8")
+                Image("Element8Title")
                     .resizable()
                     .scaledToFit()
                     .frame(maxWidth: 640, maxHeight: 260) // increased size
@@ -125,20 +173,6 @@ private struct LandingView: View {
                         .shadow(color: .black.opacity(0.25), radius: 6, x: 0, y: 4)
                 }
                 .padding(.bottom, 36)
-            }
-
-            // Decorative '8' badge in the lower-right corner
-            VStack {
-                Spacer()
-                HStack {
-                    Spacer()
-                    Image("8")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 84, height: 84)
-                        .shadow(color: .black.opacity(0.25), radius: 4, x: 0, y: 3)
-                        .padding(16)
-                }
             }
         }
     }
@@ -170,7 +204,7 @@ private struct IntroView: View {
                     Spacer(minLength: 24)
 
                     // Title image remains centered at top
-                    Image("Element8")
+                    Image("Element8Title")
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: min(geo.size.width * 0.9, 640), maxHeight: 220)
@@ -189,7 +223,7 @@ private struct IntroView: View {
                                 .onPreferenceChange(ViewHeightKey.self) { h in
                                     // Save measured height for animation calculations
                                     self.textHeight = h
-                                    self.containerHeight = geo.size.height * 0.46 // approximation of visible crawl area
+                                    self.containerHeight = geo.size.height * 1.00 // approximation of visible crawl area
                                     // Set initial offset so text starts just below the visible container
                                     if !isAnimating {
                                         self.crawlOffset = containerHeight
@@ -197,7 +231,7 @@ private struct IntroView: View {
                                 }
                                 .offset(y: crawlOffset)
                                 // Apply the classic crawl perspective: tilt backwards and slightly scale
-                                .rotation3DEffect(.degrees(25), axis: (x: 1, y: 0, z: 0), anchor: .center)
+                                .rotation3DEffect(.degrees(33), axis: (x: 1, y: 0, z: 0), anchor: .center)
                                 .scaleEffect(0.92)
                                 .animation(.linear(duration: animationDuration()), value: crawlOffset)
                                 .onAppear {
@@ -209,7 +243,7 @@ private struct IntroView: View {
 
                             Spacer()
                         }
-                        .frame(height: geo.size.height * 0.46)
+                        .frame(height: geo.size.height * 0.82)
                         .clipped()
 
                         // Top fade

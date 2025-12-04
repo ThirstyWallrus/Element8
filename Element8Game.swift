@@ -8,6 +8,7 @@
 //
 
 import SwiftUI
+import Combine
 
 // Direction along the perimeter path: forward (clockwise) or backward (counter-clockwise)
 enum Direction: String, CaseIterable {
@@ -86,6 +87,10 @@ class Player: Identifiable, ObservableObject {
 
 // Game State ViewModel (profile-driven)
 @MainActor class GameViewModel: ObservableObject {
+    // Explicit ObservableObjectPublisher to guarantee protocol conformance across contexts.
+    // This resolves edge-cases where synthesis might not satisfy the protocol (especially with actor isolation).
+    let objectWillChange = ObservableObjectPublisher()
+    
     // Board configuration (perimeter board)
     let boardSize: Int = 8 // 8x8 grid whose perimeter defines the path; with 6 spaces between corners -> 28 perimeter tiles
     var sideLength: Int { boardSize } // useful when computing tile fitting

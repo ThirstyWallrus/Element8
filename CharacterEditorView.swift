@@ -2,15 +2,6 @@
 //  CharacterEditorView.swift
 //  Element8
 //
-//  Created by Copilot on 2025-12-01 (updated).
-//  Purpose: In-app editor for CharacterProfile entries.
-//  Notes: This view carefully maps optional String properties into non-optional
-//  Bindings for use with SwiftUI controls (TextField) to avoid Binding<String?> -> Binding<String>
-//  conversion errors. It also uses safe optional checks (nil-coalescing) to avoid
-//  "optional must be unwrapped" compile errors.
-//
-//  Behavior: Select a profile from the list to edit it. Create a new profile, edit fields,
-//  and press Save to register (or overwrite) the profile in CharacterRegistry.shared.
 //
 
 import SwiftUI

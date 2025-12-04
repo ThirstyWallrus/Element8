@@ -2,7 +2,7 @@
 //  WaterCharacter.swift
 //  Element8
 //
-//  Created by Copilot on 2025-12-01.
+//  Created by Dynasty Stat Drop on 12/2/25.
 //  Water character profile and registration.
 //
 
@@ -27,4 +27,3 @@ private let waterProfile = CharacterProfile(
 private let _register_water: Void = {
     CharacterRegistry.shared.register(waterProfile)
 }()
-

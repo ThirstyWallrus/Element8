@@ -1,8 +1,8 @@
+
 //
 //  ElectricityCharacter.swift
 //  Element8
 //
-//  Created by Copilot on 2025-12-01.
 //  Electricity character profile and registration.
 //  (Requested as 'Electricy' — filename uses 'Electricity' for clarity)
 //
@@ -27,4 +27,3 @@ private let electricityProfile = CharacterProfile(
 private let _register_electricity: Void = {
     CharacterRegistry.shared.register(electricityProfile)
 }()
-

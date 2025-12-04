@@ -2,7 +2,7 @@
 //  LightCharacter.swift
 //  Element8
 //
-//  Created by Copilot on 2025-12-01.
+//  Created by Dynasty Stat Drop on 12/2/25.
 //  Light character profile and registration.
 //  Note: This does not map to an existing ElementCharacter case — elementCase is nil.
 //
@@ -28,4 +28,3 @@ private let lightProfile = CharacterProfile(
 private let _register_light: Void = {
     CharacterRegistry.shared.register(lightProfile)
 }()
-

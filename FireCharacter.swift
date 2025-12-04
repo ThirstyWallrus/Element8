@@ -2,7 +2,6 @@
 //  FireCharacter.swift
 //  Element8
 //
-//  Created by Copilot on 2025-12-01.
 //  Fire character profile and registration.
 //
 
@@ -27,3 +26,4 @@ private let fireProfile = CharacterProfile(
 private let _register_fire: Void = {
     CharacterRegistry.shared.register(fireProfile)
 }()
+

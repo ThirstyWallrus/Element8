@@ -2,7 +2,6 @@
 //  CharacterProfile.swift
 //  Element8
 //
-//  Created by Copilot on 2025-12-01.
 //  Purpose: Shared model for editable character profiles and a lightweight registry.
 //
 

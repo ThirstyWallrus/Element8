@@ -2,10 +2,7 @@
 //  GameSetupView.swift
 //  Element8
 //
-//  Created by Dynasty Stat Drop on 12/1/25.
-//
-
-
+//  Created by Dynasty Stat Drop on 12/2/25.
 //
 // GameSetupView.swift
 // Separated from Element8Game.swift on 2025-12-01 to make per-view editing easier.

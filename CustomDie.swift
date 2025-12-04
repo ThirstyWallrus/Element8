@@ -1,9 +1,7 @@
-
 //
 //  CustomDie.swift
 //  Element8
 //
-//  Created by Copilot Space on 2025-12-01.
 //  Purpose: Flexible custom die model + SwiftUI view.
 //  - Supports numeric faces (1..N), pips (d6-style), and image faces.
 //  - Supports optional side weights for non-uniform dice.

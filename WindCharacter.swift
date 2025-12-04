@@ -2,7 +2,7 @@
 //  WindCharacter.swift
 //  Element8
 //
-//  Created by Copilot on 2025-12-01.
+//  Created by Dynasty Stat Drop on 12/2/25.
 //  Wind character profile and registration.
 //
 

@@ -1,12 +1,8 @@
 //
-//  Element8BoardView.swift
+//  BoardView.swift
 //  Element8
 //
-//  Created by Copilot on 2025-12-01.
-//  Purpose: Reusable board view for the Element8 game.
-//  This view is compatible with GameViewModel defined in Element8Game.swift.
-//  Add this file to the project and optionally replace inline map rendering
-//  in GameView with BoardView(viewModel: viewModel).
+//  Created by Dynasty Stat Drop on 12/2/25.
 //
 
 import SwiftUI

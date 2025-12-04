@@ -2,9 +2,9 @@
 //  GameView.swift
 //  Element8
 //
-//  Created by Dynasty Stat Drop on 12/1/25.
+//  Created by Dynasty Stat Drop on 12/2/25.
 //
-//  Updated on 2025-12-01 by Copilot:
+//
 //  - Switched to BoardView for map rendering.
 //  - Added on-screen live dice rolling overlay (DieView).
 //  - Ensures the entire board is visible while rolling by computing tile height to fit the available board area.

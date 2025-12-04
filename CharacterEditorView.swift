@@ -2,6 +2,7 @@
 //  CharacterEditorView.swift
 //  Element8
 //
+//  Updated 2025-12-04: use Norse font for all button labels in this view.
 //
 
 import SwiftUI
@@ -58,6 +59,8 @@ struct CharacterEditorView: View {
                                 .padding(.vertical, 6)
                             }
                             .buttonStyle(PlainButtonStyle())
+                            // Ensure the tappable row uses Norse for its label appearance
+                            .font(Font.custom("Norse", size: 15))
                         }
                     }
                     
@@ -66,6 +69,7 @@ struct CharacterEditorView: View {
                             HStack {
                                 Image(systemName: "plus.circle")
                                 Text("Create New Profile")
+                                    .font(Font.custom("Norse", size: 15))
                             }
                         }
                     }
@@ -178,6 +182,7 @@ struct CharacterEditorView: View {
                                 Spacer()
                                 Button(action: saveDraft) {
                                     Text("Save Profile")
+                                        .font(Font.custom("Norse", size: 15))
                                 }
                                 .buttonStyle(.borderedProminent)
                                 Spacer()
@@ -199,6 +204,7 @@ struct CharacterEditorView: View {
                         Button("Create new profile") {
                             showingCreateAlert = true
                         }
+                        .font(Font.custom("Norse", size: 15))
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
@@ -214,6 +220,7 @@ struct CharacterEditorView: View {
                         Image(systemName: "arrow.clockwise")
                     }
                     .help("Clear selection")
+                    // toolbar icon retained as system image; label-less button — nothing to change here
                 }
             }
         }

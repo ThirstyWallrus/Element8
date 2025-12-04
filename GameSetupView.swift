@@ -8,6 +8,7 @@
 // Separated from Element8Game.swift on 2025-12-01 to make per-view editing easier.
 //
 // This view uses CharacterRegistry.shared for profile listing and GameView for navigation.
+// Updated 2025-12-04 to apply Caribbean for the heading and Norse for button labels.
 //
 
 import SwiftUI
@@ -20,7 +21,8 @@ struct GameSetupView: View {
     var body: some View {
         VStack {
             Text("Select 2-8 Characters")
-                .font(.title)
+                // VIEW TITLE: use Caribbean font per your instruction
+                .font(Font.custom("Caribbean", size: 22))
                 .padding(.top, 20)
             
             List {
@@ -61,6 +63,8 @@ struct GameSetupView: View {
                             }
                         }
                         .padding(.vertical, 6)
+                        // BUTTON LABEL: ensure label text inside Button uses Norse (applies to tapping the row)
+                        .font(Font.custom("Norse", size: 15))
                     }
                 }
             }
@@ -77,7 +81,8 @@ struct GameSetupView: View {
                 }
             }) {
                 Text("Start Game")
-                    .font(.headline)
+                    // BUTTON LABEL: use Norse
+                    .font(Font.custom("Norse", size: 16))
                     .foregroundColor(.white)
                     .padding()
                     .frame(maxWidth: .infinity)

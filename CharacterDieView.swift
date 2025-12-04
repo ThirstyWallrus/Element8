@@ -106,7 +106,8 @@ public struct CharacterDieView: View {
             
             // Numeric face (large)
             Text("\(face)")
-                .font(.system(size: 36, weight: .bold, design: .rounded))
+                // DIE NUMBER: use Norse-Bold to render numeric faces instead of dots
+                .font(Font.custom("Norse-Bold", size: 36))
                 .foregroundColor(textColor)
                 .shadow(color: Color.white.opacity(0.25), radius: 0.6, x: -0.6, y: -0.6)
                 .shadow(color: Color.black.opacity(0.18), radius: 1.8, x: 1, y: 2)

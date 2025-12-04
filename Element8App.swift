@@ -11,6 +11,11 @@ import SwiftUI
 
 @main
 struct Element8App: App {
+    init() {
+        #if Debug
+        FontDiagnostics.printAvaliableFonts()
+        #endif
+    }
     var body: some Scene {
         WindowGroup {
             // Wrap the entire app in AppRootView which measures the content and the window
@@ -38,6 +43,7 @@ private struct ContentSizeKey: PreferenceKey {
 /// - measures the intrinsic size of `content`,
 /// - computes a uniform scale factor so content fits in the measured window if needed,
 /// - centers the content and applies the computed scale.
+/// - applies a global custom font (Caribbean) to the environment so child views inherit it.
 ///
 struct AppRootView<Content: View>: View {
     private let content: Content

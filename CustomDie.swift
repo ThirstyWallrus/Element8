@@ -7,6 +7,7 @@
 //  - Supports optional side weights for non-uniform dice.
 //  - Provides a roll() helper that returns chosen index + semantic value if needed.
 //  - Provides CustomDieView which displays one face and is animation-friendly.
+//  - 2025-12-04: pips now render numeric face text using Norse-Bold (per request to use numbers instead of dots).
 //
 
 import SwiftUI
@@ -18,7 +19,7 @@ public enum DieFaceContent: Hashable {
     /// Simple numeric face (e.g., "4")
     case number(Int)
     /// Pips layout: we keep it as an Int for standard d6 style (1..6).
-    /// If you want custom pip layouts for non-6-sided dice you can extend this.
+    /// Now rendered as a numeric label (Norse-Bold) rather than dot pips per user request.
     case pips(Int)
     /// Image asset name to render for the face (the image should exist in Assets.xcassets)
     case image(String)
@@ -151,11 +152,15 @@ public struct CustomDieView: View {
             switch face {
             case .number(let n):
                 Text("\(n)")
-                    .font(.system(size: size * 0.38, weight: .bold, design: .rounded))
+                    // DIE NUMBER: use Norse-Bold for numeric faces
+                    .font(Font.custom("Norse-Bold", size: size * 0.38))
                     .foregroundColor(.black)
                     .accessibilityLabel(Text("Die \(n)"))
             case .pips(let n):
-                PipsView(pips: n, maxSize: size * 0.7)
+                // Per-request: render the numeric face instead of dot pips using Norse-Bold.
+                Text("\(n)")
+                    .font(Font.custom("Norse-Bold", size: size * 0.42))
+                    .foregroundColor(.black)
                     .accessibilityElement(children: .ignore)
                     .accessibilityLabel(Text("\(n) pips"))
             case .image(let name):
@@ -169,7 +174,7 @@ public struct CustomDieView: View {
                 } else {
                     // Fallback to a numbered placeholder if image not found
                     Text(name)
-                        .font(.system(size: size * 0.18, weight: .semibold))
+                        .font(Font.custom("Norse-Bold", size: size * 0.18))
                         .foregroundColor(.primary)
                         .multilineTextAlignment(.center)
                         .accessibilityLabel(Text(name))
@@ -181,8 +186,7 @@ public struct CustomDieView: View {
 }
 
 // MARK: - PipsView
-/// Lightweight view that draws standard pip arrangements for 1..6.
-/// It scales to maxSize provided.
+/// (No longer used for pips rendering; retained for compatibility but left to show original approach.)
 fileprivate struct PipsView: View {
     let pips: Int
     let maxSize: CGFloat
@@ -193,59 +197,11 @@ fileprivate struct PipsView: View {
     }
     
     var body: some View {
-        GeometryReader { geo in
-            let s = min(geo.size.width, geo.size.height)
-            let pipSize = max(6, s * 0.16)
-            let offset = s * 0.22
-            
-            ZStack {
-                // For each pip position, optionally draw a circle depending on pips
-                if pips == 1 || pips == 3 || pips == 5 {
-                    // center pip
-                    Circle()
-                        .fill(Color.black)
-                        .frame(width: pipSize, height: pipSize)
-                }
-                
-                if pips >= 2 {
-                    // top-left & bottom-right pair
-                    Circle()
-                        .fill(Color.black)
-                        .frame(width: pipSize, height: pipSize)
-                        .position(x: s * 0.2, y: s * 0.2)
-                    Circle()
-                        .fill(Color.black)
-                        .frame(width: pipSize, height: pipSize)
-                        .position(x: s * 0.8, y: s * 0.8)
-                }
-                
-                if pips >= 4 {
-                    // top-right & bottom-left pair
-                    Circle()
-                        .fill(Color.black)
-                        .frame(width: pipSize, height: pipSize)
-                        .position(x: s * 0.8, y: s * 0.2)
-                    Circle()
-                        .fill(Color.black)
-                        .frame(width: pipSize, height: pipSize)
-                        .position(x: s * 0.2, y: s * 0.8)
-                }
-                
-                if pips == 6 {
-                    // middle-left & middle-right
-                    Circle()
-                        .fill(Color.black)
-                        .frame(width: pipSize, height: pipSize)
-                        .position(x: s * 0.2, y: s * 0.5)
-                    Circle()
-                        .fill(Color.black)
-                        .frame(width: pipSize, height: pipSize)
-                        .position(x: s * 0.8, y: s * 0.5)
-                }
-            }
-            .frame(width: s, height: s)
-        }
-        .frame(width: maxSize, height: maxSize)
+        // Render numeric label instead of dot pips per request (Norse-Bold).
+        Text("\(pips)")
+            .font(Font.custom("Norse-Bold", size: maxSize * 0.42))
+            .foregroundColor(.black)
+            .frame(width: maxSize, height: maxSize)
     }
 }
 

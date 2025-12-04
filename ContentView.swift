@@ -5,6 +5,7 @@
 //  Created by Dynasty Stat Drop on 3/14/25.
 //  Updated by Copilot on 2025-12-01 to use global Sepia background, increase title size, and refine layout.
 //  Updated by Copilot on 2025-12-01 to include Star Wars-style intro crawl (backstory).
+//  Updated on 2025-12-04 to apply fonts: Caribbean for crawl/title, Norse for buttons.
 //
 
 import SwiftUI
@@ -164,7 +165,8 @@ private struct LandingView: View {
                 // Enter button to proceed into HomeView for continuity
                 NavigationLink(destination: HomeView()) {
                     Text("Enter")
-                        .font(.system(size: 18, weight: .semibold))
+                        // BUTTON LABEL: use Norse (regular) per your instruction
+                        .font(Font.custom("Norse", size: 18))
                         .foregroundColor(.white)
                         .padding(.vertical, 14)
                         .padding(.horizontal, 36)
@@ -278,7 +280,8 @@ private struct IntroView: View {
                     HStack(spacing: 12) {
                         NavigationLink(destination: HomeView()) {
                             Text("Enter")
-                                .font(.system(size: 16, weight: .semibold))
+                                // BUTTON LABEL: use Norse
+                                .font(Font.custom("Norse", size: 16))
                                 .foregroundColor(.white)
                                 .padding(.vertical, 10)
                                 .padding(.horizontal, 28)
@@ -296,7 +299,8 @@ private struct IntroView: View {
                             stopCrawlAndFinish()
                         }) {
                             Text("Skip Intro")
-                                .font(.subheadline)
+                                // BUTTON LABEL: use Norse
+                                .font(Font.custom("Norse", size: 14))
                                 .foregroundColor(.primary)
                         }
                     }
@@ -360,9 +364,9 @@ private struct ScrollCrawlText: View {
 
     var body: some View {
         VStack {
-            // Use a monospaced-ish, slightly condensed style often used in crawls
+            // Use Caribbean font for the story text per your instruction.
             Text(text)
-                .font(.system(size: 18, weight: .regular, design: .serif))
+                .font(Font.custom("Caribbean", size: 18))
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
                 .lineSpacing(8)

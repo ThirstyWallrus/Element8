@@ -5,6 +5,7 @@
 //  Created by Dynasty Stat Drop on 11/30/25.
 //  Updated by Copilot on 2025-12-01 to use global Sepia background and sand/script themed menu colors.
 //  Modified on 2025-12-01 to add "Play Game" navigation link to GameSetupView and "Edit Characters" to open the in-app editor.
+//  Updated on 2025-12-04: apply Caribbean for headings and Norse for all button labels.
 //
 
 import SwiftUI
@@ -36,7 +37,8 @@ struct HomeView: View {
                     
                     // Brief description matching website vibe
                     Text("Coming Soon")
-                        .font(.title3)
+                        // HEADING: use Caribbean for prominent heading text
+                        .font(Font.custom("Caribbean", size: 20))
                         .foregroundColor(scriptText)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 24)
@@ -46,7 +48,8 @@ struct HomeView: View {
                     // New: Play Game navigation link (integrates the new game views)
                     NavigationLink(destination: GameSetupView()) {
                         Text("Play Game")
-                            .font(.headline)
+                            // BUTTON LABEL: use Norse
+                            .font(Font.custom("Norse", size: 16))
                             .foregroundColor(.white)
                             .padding()
                             .frame(maxWidth: .infinity)
@@ -59,7 +62,8 @@ struct HomeView: View {
                     // Edit Characters (open in-app editor)
                     NavigationLink(destination: CharacterEditorView()) {
                         Text("Edit Characters")
-                            .font(.headline)
+                            // BUTTON LABEL: use Norse
+                            .font(Font.custom("Norse", size: 16))
                             .foregroundColor(.white)
                             .padding()
                             .frame(maxWidth: .infinity)
@@ -72,7 +76,8 @@ struct HomeView: View {
                     // Navigation buttons with sand/script themed styling
                     NavigationLink(destination: AboutView()) {
                         Text("About Element 8")
-                            .font(.headline)
+                            // BUTTON LABEL: use Norse
+                            .font(Font.custom("Norse", size: 16))
                             .foregroundColor(.white)
                             .padding()
                             .frame(maxWidth: .infinity)
@@ -84,7 +89,8 @@ struct HomeView: View {
                     
                     NavigationLink(destination: ShopView()) {
                         Text("Shop")
-                            .font(.headline)
+                            // BUTTON LABEL: use Norse
+                            .font(Font.custom("Norse", size: 16))
                             .foregroundColor(.white)
                             .padding()
                             .frame(maxWidth: .infinity)
@@ -96,7 +102,8 @@ struct HomeView: View {
                     
                     NavigationLink(destination: RulesView()) {
                         Text("Game Rules")
-                            .font(.headline)
+                            // BUTTON LABEL: use Norse
+                            .font(Font.custom("Norse", size: 16))
                             .foregroundColor(scriptText) // darker text on lighter sand
                             .padding()
                             .frame(maxWidth: .infinity)

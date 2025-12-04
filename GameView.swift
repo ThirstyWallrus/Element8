@@ -4,12 +4,12 @@
 //
 //  Created by Dynasty Stat Drop on 12/2/25.
 //
-//
 //  - Switched to BoardView for map rendering.
 //  - Added on-screen live dice rolling overlay (DieView).
 //  - Ensures the entire board is visible while rolling by computing tile height to fit the available board area.
 //  - Disables input while rolling and animates the die with randomized faces and rotation.
 //  - 2025-12-01 update: Forward/Backward movement on perimeter path (Monopoly-style).
+//  - 2025-12-04: use Norse for button labels and Norse-Bold for dice numeric face.
 //
 
 import SwiftUI
@@ -100,7 +100,8 @@ struct GameView: View {
                             }
                         }) {
                             Text(dir.rawValue)
-                                .font(.subheadline)
+                                // BUTTON LABEL: use Norse for the direction buttons
+                                .font(Font.custom("Norse", size: 14))
                                 .foregroundColor(.white)
                                 .padding(10)
                                 .frame(minWidth: 64)
@@ -251,7 +252,8 @@ fileprivate struct DieView: View {
             
             // Numeric face with subtle emboss
             Text("\(face)")
-                .font(.system(size: 36, weight: .bold, design: .rounded))
+                // DIE NUMBER: use Norse-Bold for die numeric faces
+                .font(Font.custom("Norse-Bold", size: 36))
                 .foregroundColor(.black)
                 .shadow(color: Color.white.opacity(0.6), radius: 0.6, x: -0.5, y: -0.5)
                 .shadow(color: Color.black.opacity(0.18), radius: 2, x: 1, y: 2)

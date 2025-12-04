@@ -26,22 +26,16 @@ struct HomeView: View {
                 
                 VStack(spacing: 20) {
                     // Brand image for consistent look (increased size)
-                    Image("Element8")
+                    Image("Element8Title")
                         .resizable()
                         .scaledToFit()
                         .frame(height: 110) // increased title size
                         .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 2)
                         .padding(.top, 36)
                     
-                    // Decorative hero symbol (use bundled '8' image)
-                    Image("8")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 140)
-                        .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 3)
                     
                     // Brief description matching website vibe
-                    Text("Harness the power of the elements in this epic adventure board game!")
+                    Text("Coming Soon")
                         .font(.title3)
                         .foregroundColor(scriptText)
                         .multilineTextAlignment(.center)

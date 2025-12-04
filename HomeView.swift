@@ -6,6 +6,7 @@
 //  Updated by Copilot on 2025-12-01 to use global Sepia background and sand/script themed menu colors.
 //  Modified on 2025-12-01 to add "Play Game" navigation link to GameSetupView and "Edit Characters" to open the in-app editor.
 //  Updated on 2025-12-04: apply Caribbean for headings and Norse for all button labels.
+//  Modified on 2025-12-04: updated "Game Rules" link to open new GameRules view (separate file).
 //
 
 import SwiftUI
@@ -100,7 +101,7 @@ struct HomeView: View {
                     }
                     .padding(.horizontal, 40)
                     
-                    NavigationLink(destination: RulesView()) {
+                    NavigationLink(destination: GameRules()) {
                         Text("Game Rules")
                             // BUTTON LABEL: use Norse
                             .font(Font.custom("Norse", size: 16))
@@ -144,17 +145,6 @@ struct ShopView: View {
                 .padding()
         }
         .navigationTitle("Shop")
-    }
-}
-
-struct RulesView: View {
-    var body: some View {
-        VStack {
-            Text("Rules Page")
-                .font(.title)
-                .padding()
-        }
-        .navigationTitle("Rules")
     }
 }
 

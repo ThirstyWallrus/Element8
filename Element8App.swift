@@ -53,7 +53,7 @@ struct AppRootView<Content: View>: View {
         GeometryReader { geo in
             ZStack {
                 // Global background applied once at the root so child views do not need to add full-screen backgrounds.
-                Image("Sepia")
+                Image("Sepia BG")
                     .resizable()
                     .scaledToFill()
                     .ignoresSafeArea()

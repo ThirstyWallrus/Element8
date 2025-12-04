@@ -30,7 +30,7 @@ struct HomeView: View {
                     Image("Element8Title")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: 110) // increased title size
+                        .frame(height: 220) // increased title size
                         .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 2)
                         .padding(.top, 36)
                     
